@@ -50,7 +50,7 @@ public class BrandsController {
             return ResponseEntity.ok(getByIdResponseBrand);
         }
         else {
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Böyle bir Id ye Ait Marka Kaydı mevcut değildir");
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Bu Idye Ait Kayıt Mevcut Değildir");
         }
     }
 
