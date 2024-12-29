@@ -23,8 +23,13 @@ public class ModelsController {
 
 
     @PostMapping("/add")
-    public void create(@RequestBody @Valid CreateModelRequest createModelRequest){
-        modelService.add(createModelRequest);
+    public ResponseEntity<Object> create(@RequestBody @Valid CreateModelRequest createModelRequest){
+      CreateModelRequest createModel=modelService.add(createModelRequest);
+        if (createModel != null) {
+           return ResponseEntity.ok("Kayıt İşleminiz Başarılı Bir Şekilde Gerçekleşti");
+        }else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Kayıt İşlemi Başarısız");
+        }
     }
 
 
@@ -33,6 +38,7 @@ public class ModelsController {
         List<GetAllModelsResponse>getAllModelsResponses=modelService.getAll();
         return getAllModelsResponses;
     }*/
+
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id")int id){
@@ -45,6 +51,7 @@ public class ModelsController {
         }
     }
 
+
     @PutMapping("/update/{id}")
     public ResponseEntity<Object>update(@PathVariable("id") int id, @RequestBody @Valid UpdateModelRequest updateModelRequest){
     UpdateModelRequest modelRequest= modelService.update(id,updateModelRequest );
@@ -52,10 +59,9 @@ public class ModelsController {
      return ResponseEntity.ok("Güncelleme İşlemi Başarılı Bir Şekilde Gerçekleşti");
     }else {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Güncelleme İşlemi Başarısız Girdiğiniz Id Mevcut Değil...");
-
+    }
     }
 
-    }
 
 
     @DeleteMapping("/remove/{id}")
@@ -66,17 +72,12 @@ public class ModelsController {
          }else {
              return ResponseEntity.status(HttpStatus.NOT_FOUND).body("BÖYLE BİR IDYE AİT KAYDINIZ YOK SİLME İŞLEMİ BAŞARISIZ");
          }
-
-
-        }
-
-        @GetMapping
-     public List<GetAllModelsResponse>getAll(@RequestParam Optional<Integer>brandId){
-            List<GetAllModelsResponse> getAllModelsResponses=modelService.getAll(brandId);
-            return getAllModelsResponses;
     }
 
 
-
-
+        @GetMapping
+            public List<GetAllModelsResponse>getAll(@RequestParam Optional<Integer>brandId){
+            List<GetAllModelsResponse> getAllModelsResponses=modelService.getAll(brandId);
+            return getAllModelsResponses;
+    }
 }

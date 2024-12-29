@@ -20,7 +20,7 @@ public class CarRentalManager implements CarRentalService {
     public List<GetAllCarsResponse> getAll() {
        List<Car>cars=carRepository.findAll();
         List<GetAllCarsResponse>getAllCarsResponses= cars.stream()
-                .filter(car -> car.getState().contains("AKTİF"))
+                .filter(car ->car.getState().equals("AKTİF"))
                 .map(car -> modelMapperService.forResponse().
                         map(car,GetAllCarsResponse.class)).collect(Collectors.toList());
 

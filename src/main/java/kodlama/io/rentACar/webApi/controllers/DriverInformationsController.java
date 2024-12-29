@@ -14,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/driver")
-
 @AllArgsConstructor
 
 public class DriverInformationsController {
@@ -26,7 +25,7 @@ public class DriverInformationsController {
         if (request!=null){
             return ResponseEntity.ok("Araba kiralama işlemeniz başarılı bir şekilde gerçekleşti iyi sürüşler");
         }else
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("kiralama işlemi başarısız");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("kiralama işlemi başarısız");
     }
 
     @GetMapping("/getAll")

@@ -40,6 +40,7 @@ public class CarManager implements CarService {
     @Override
     public List<GetAllCarsResponse> getAll(Optional<Integer> modelId) {
     if (modelId.isPresent()){
+        carBusinessRules.checkModelId(modelId.get());
         List<Car>cars=carRepository.findByModelId(modelId.get());
         List<GetAllCarsResponse>getAllCarsResponses=cars.stream()
                 .map(car -> modelMapperService.forResponse()

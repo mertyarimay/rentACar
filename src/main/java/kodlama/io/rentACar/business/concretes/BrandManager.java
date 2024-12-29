@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,69 +28,48 @@ public class BrandManager implements BrandService {
 
 
     @Override
-    public List<GetAllResponseBrands> getAll() { //burda mapping yapmamız lazım çünkü entity dekileri response atmam lazım ordaki ıd leri ve nameleri
-
-                                 //model mapperle kullanımı
-
-        List<Brand>brands=brandRepository.findAll();//repositeryden aldığımı brands instance atıyorum
-        List<GetAllResponseBrands>brandsResponse=brands.stream()
-                .map(brand ->modelMapperService.forResponse()
-                        .map(brand,GetAllResponseBrands.class)).collect(Collectors.toList());
-          return brandsResponse;
+    public CreateBrandRequest add(CreateBrandRequest createBrandRequest) {
+        brandBusinessRules.checkIfBrandNameExists(createBrandRequest.getName());
+        Brand brand=modelMapperService.forRequest().map(createBrandRequest,Brand.class);
+        brandRepository.save(brand);
+        CreateBrandRequest brandRequest=modelMapperService.forRequest().map(brand,CreateBrandRequest.class);
+        return brandRequest;
     }
 
 
-
-
-                               //model mappersız kullanımı
-
-    //  List<Brand>brands=brandRepository.findAll();//repositeryden aldığımı brands instance atıyorum
-    //List<GetAllResponseBrands>brandsResponse=new ArrayList<GetAllResponseBrands>();//RESPONSE ADI ALTINDA BOŞ BİR LİSTE OLUŞTURUYORUZ
-    // for (Brand brand:brands) {//tüm brandleri dolaşıp
-    //     GetAllResponseBrands resposeItem=new GetAllResponseBrands(); //her dolaştığımda bir tane eleman oluşturuyorum
-    //      resposeItem.setId(brand.getId());//response ıtemın ıd si listede gezdiğim bradın ıd si
-    //      resposeItem.setName(brand.getName());//responseıtemin name listede gezdiğim brandın name dir
-
-    //     brandsResponse.add(resposeItem);//sonuç olarak listemize ekliyoruz
-    // }
-    //return brandsResponse;
-
-
-
-                    //model mapperle kullanımı
     @Override
-    public void add(CreateBrandRequest createBrandRequest) {
-        brandBusinessRules.checkIfBrandNameExists(createBrandRequest.getName());//kuralı buraya ekliyoruz nerden alıyoruz requstimin name inden
-     Brand brand=modelMapperService.forRequest().map(createBrandRequest,Brand.class);
-     brandRepository.save(brand);
-
-
-
-                    //MODEL MAPPERSIZ KULLANIMI
-      //  Brand brand=new Brand();  //bir brand oluşturuyoruz
-       // brand.setName(createBrandRequest.getName());//bu brandın name createn gelen name dir  repository kayıt etmek için entitye atıyoruz
-       // this.brandRepository.save(brand);
+    public List<GetAllResponseBrands> getAll() {
+        List<Brand>brands=brandRepository.findAll();
+        List<GetAllResponseBrands>getAllResponseBrands=brands.stream().map(brand -> modelMapperService.forResponse().map(brand, GetAllResponseBrands.class)).collect(Collectors.toList());
+        return getAllResponseBrands;
     }
 
 
+    //model mappersız kullanımı
+  /*  @Override
+    public List<GetAllResponseBrands> getAll() {
+        List<Brand>brands=brandRepository.findAll();
+        List<GetAllResponseBrands>getAllResponseBrands=new ArrayList<>();
+        for (Brand brand:brands){
+            GetAllResponseBrands responseBrand=new GetAllResponseBrands();
+            responseBrand.setId(brand.getId());
+            responseBrand.setName(brand.getName());
+            getAllResponseBrands.add(responseBrand);
+        }
+        return getAllResponseBrands;
 
+    }*/
 
     @Override
     public GetByIdResponseBrand getById(int id) {
        Optional<Brand>brand=brandRepository.findById(id);
        if (brand.isPresent()){
-           GetByIdResponseBrand getByIdResponseBrand=modelMapperService.forResponse().map(brand,GetByIdResponseBrand.class);
+           GetByIdResponseBrand getByIdResponseBrand=modelMapperService.forResponse().map(brand.get(),GetByIdResponseBrand.class);
            return getByIdResponseBrand;
        }else {
            return null;
        }
-
-
-
-
-
     }
-
 
     @Override
     public UpdateBrandRequsest update(int id,UpdateBrandRequsest updateBrandRequsest) {
@@ -97,8 +77,8 @@ public class BrandManager implements BrandService {
         Optional<Brand>brand=brandRepository.findById(id);
         if(brand.isPresent()){
             brand.get().setName(updateBrandRequsest.getName());
-            UpdateBrandRequsest brandRequsest=modelMapperService.forRequest().map(brandRepository.save(brand.get()),UpdateBrandRequsest.class);
-           return brandRequsest;
+            UpdateBrandRequsest brandRequest=modelMapperService.forRequest().map(brandRepository.save(brand.get()),UpdateBrandRequsest.class);
+           return brandRequest;
         }
         else {
             return null;
@@ -115,10 +95,6 @@ public class BrandManager implements BrandService {
          return false;
         }
 
-
-
-
-
-
     }
+
 }

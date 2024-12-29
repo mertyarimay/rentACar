@@ -31,7 +31,7 @@ public class DriverInformationDiscountController {
             return ResponseEntity.ok(driverInformationDiscountRules.indirimliFiyatHesaplama(createDriverInformationDiscountRequest1.getCarId()));
 
         }else {
-          return   ResponseEntity.status(HttpStatus.NOT_FOUND).body("Kiralama işleminiz başarısız");
+          return   ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Kiralama işleminiz başarısız");
         }
     }
 

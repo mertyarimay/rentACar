@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface ModelService {
 
-    void add(CreateModelRequest createModelRequest);
+    CreateModelRequest add(CreateModelRequest createModelRequest);
     //List<GetAllModelsResponse> getAll();
     GetByIdModelsResponse getById(int id);
     UpdateModelRequest update(int id , UpdateModelRequest updateModelRequest);

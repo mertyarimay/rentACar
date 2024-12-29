@@ -22,14 +22,26 @@ public class BrandsController {
     private BrandService brandService;
 
     @PostMapping("/add")
-    public void add(@RequestBody @Valid CreateBrandRequest createBrandRequest) { //bana bir request ver @valid requestte  koyduğumuz harf kuralları vs çalışssın diye kullanılıyor
-        brandService.add(createBrandRequest);//bende bunu service gönderim
+    public ResponseEntity<Object> add(@RequestBody @Valid CreateBrandRequest createBrandRequest) { //bana bir request ver @valid requestte  koyduğumuz harf kuralları vs çalışssın diye kullanılıyor
+      CreateBrandRequest brandRequest=brandService.add(createBrandRequest);//bende bunu service gönderim
+        if(brandRequest!=null){
+        return ResponseEntity.ok("Kaydınız Başarılı bir şekilde oluştu");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Kayıt İşlemi Başarısız");
+
+        }
     }
+
+
 
     @GetMapping("/getAll")
     public List<GetAllResponseBrands>getAll(){
-        return brandService.getAll();
+        List<GetAllResponseBrands>getAllResponseBrands=brandService.getAll();
+        return getAllResponseBrands;
     }
+
+
 
     @GetMapping("/getById/{id}")
     public ResponseEntity<Object> getById(@PathVariable("id") int id){
@@ -42,16 +54,18 @@ public class BrandsController {
         }
     }
 
+
     @PutMapping("/update/{id}")
     public ResponseEntity<Object>update(@PathVariable("id") int id,@RequestBody  @Valid UpdateBrandRequsest updateBrandRequsest){
-       UpdateBrandRequsest brandRequsest= brandService.update(id,updateBrandRequsest);
-       if(brandRequsest!=null){
+       UpdateBrandRequsest brandRequest= brandService.update(id,updateBrandRequsest);
+       if(brandRequest!=null){
         return  ResponseEntity.ok("Güncelleme işlemi Başarılı Bir Şekilde Gerçekleşti ");
        }
        else {
            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Güncelleme İşlemi BAŞARISIZ Id Bulunamadı");
        }
     }
+
 
 
     @DeleteMapping("/remove/{id}")
@@ -63,16 +77,5 @@ public class BrandsController {
         return   ResponseEntity.status(HttpStatus.NOT_FOUND).body("BU IDYE AİT KAYIT OLMADIĞI İÇİN SİLME İŞLEMİ BAŞARISIZ OLDU");
        }
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }

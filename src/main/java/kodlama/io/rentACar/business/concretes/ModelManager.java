@@ -30,13 +30,17 @@ public class ModelManager implements ModelService {
 
 
     @Override
-    public void add(CreateModelRequest createModelRequest) {
+    public CreateModelRequest add(CreateModelRequest createModelRequest) {
         modelBusinessRules.checkIfModelNameExists(createModelRequest.getName());
         modelBusinessRules.checkBrandId(createModelRequest.getBrandId());
         Model model=modelMapperService.forRequest().map(createModelRequest,Model.class);
         modelRepository.save(model);
+        CreateModelRequest createModel=modelMapperService.forRequest().map(model, CreateModelRequest.class);
+        return createModel;
     }
- /*   @Override
+
+
+    /*   @Override
     public List<GetAllModelsResponse> getAll() {
 
         List<Model>models=modelRepository.findAll();
@@ -94,12 +98,16 @@ public class ModelManager implements ModelService {
     @Override
     public List<GetAllModelsResponse> getAll(Optional<Integer> brandId) {
         if (brandId.isPresent()){
+
+            modelBusinessRules.checkBrandId(brandId.get());
+
     List<Model>models=modelRepository.findByBrandId(brandId.get());
     List<GetAllModelsResponse>getAllModelsResponses=models.stream()
             .map(model -> modelMapperService.forResponse()
                     .map(model,GetAllModelsResponse.class)).collect(Collectors.toList());
     return getAllModelsResponses;
         }
+
         else {
             List<Model>models=modelRepository.findAll();
             List<GetAllModelsResponse>getAllModelsResponses=models.stream()
